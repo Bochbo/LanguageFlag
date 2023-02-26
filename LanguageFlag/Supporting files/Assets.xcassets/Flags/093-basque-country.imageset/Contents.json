@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "093-basque-country.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}
