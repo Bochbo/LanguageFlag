@@ -14,12 +14,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: - Variables
     private var languageWindowControllerArray = [LanguageWindowController]()
-    private lazy var statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private var statusBarManager: StatusBarManager?
     private var isCapsLockEnabled = false
 
     // MARK: - Life cycle
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        configureStatusBar()
+        statusBarManager = StatusBarManager()
         createWindows()
         addObservers()
     }
@@ -34,29 +34,12 @@ private extension AppDelegate {
     }
 
     @objc
-    private func exitApplication() {
-        NSApplication.shared.terminate(self)
-    }
-
-    @objc
     private func inputSourceChanged() {
         let currentLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue()
-        let localizedNameString = currentLayout.name
-        let iconRef = currentLayout.iconRef
-        let model = KeyboardLayoutNotification(keyboardLayout: localizedNameString,
+        let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
                                                isCapsLockEnabled: isCapsLockEnabled,
-                                               iconRef: iconRef)
+                                               iconRef: currentLayout.iconRef)
         NotificationCenter.default.post(name: .keyboardLayoutChanged, object: model)
-    }
-
-    @objc
-    private func changeMenuItemState(_ sender: NSMenuItem?) {
-        guard let sender = sender else {
-            return
-        }
-        LaunchAtLogin.isEnabled.toggle()
-        let state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
-        sender.state = state
     }
 }
 
@@ -73,14 +56,11 @@ private extension AppDelegate {
                                                             name: NSNotification.Name(kTISNotifySelectedKeyboardInputSourceChanged as String),
                                                             object: nil)
 
-        // Create a new NSEvent object to monitor caps lock events
         let eventMask = NSEvent.EventTypeMask.flagsChanged
         NSEvent.addGlobalMonitorForEvents(matching: eventMask,
                                           handler: { [weak self] (event: NSEvent) -> Void in
             guard let self = self else { return }
-            // Check if caps lock is enabled or disabled
-            let flags = event.modifierFlags
-            let capsLockEnabled = flags.contains(.capsLock)
+            let capsLockEnabled = event.modifierFlags.contains(.capsLock)
             self.setCapsLockState(capsLockEnabled)
         })
     }
@@ -88,7 +68,9 @@ private extension AppDelegate {
     private func setCapsLockState(_ isEnabled: Bool) {
         if isCapsLockEnabled != isEnabled {
             isCapsLockEnabled = isEnabled
-            inputSourceChanged()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                self?.inputSourceChanged()
+            }
         }
         isCapsLockEnabled = isEnabled
     }
@@ -97,11 +79,20 @@ private extension AppDelegate {
 //        let flags = CGEventFlags(rawValue: CGEventSource.flagsState(.hidSystemState).rawValue)
 //        return flags.contains(.maskAlphaShift)
 //    }
+//
+//    func getIsCapsLockIOEnabled() -> Bool {
+//        var ioConnect: io_connect_t = .init(0)
+//        let ioService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching(kIOHIDSystemClass))
+//        IOServiceOpen(ioService, mach_task_self_, UInt32(kIOHIDParamConnectType), &ioConnect)
+//
+//        var modifierLockState = false
+//        IOHIDGetModifierLockState(ioConnect, Int32(kIOHIDCapsLockState), &modifierLockState)
+//        IOServiceClose(ioConnect)
+//        return modifierLockState
+//    }
 
     private func reconfigureWindows() {
-        languageWindowControllerArray.forEach {
-            $0.close()
-        }
+        languageWindowControllerArray.forEach { $0.close() }
         languageWindowControllerArray.removeAll()
         createWindows()
     }
@@ -115,42 +106,5 @@ private extension AppDelegate {
             windowController.windowDidLoad()
             languageWindowControllerArray.append(windowController)
         }
-    }
-
-    private func configureStatusBar() {
-        guard statusItem.button != nil else { return }
-
-        let exitMenuItem: NSMenuItem = {
-            let item = NSMenuItem(
-                title: "Exit",
-                action: #selector(exitApplication),
-                keyEquivalent: ""
-            )
-
-            item.tag = 0
-            item.target = self
-            item.isEnabled = true
-            return item
-        }()
-
-        let loginMenuItem: NSMenuItem = {
-            let item = NSMenuItem(
-                title: "Launch at login",
-                action: #selector(changeMenuItemState),
-                keyEquivalent: ""
-            )
-
-            item.tag = 0
-            item.target = self
-            item.isEnabled = true
-            let state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
-            item.state = state
-            return item
-        }()
-
-        let statusMenu = NSMenu()
-        statusMenu.items = [loginMenuItem, exitMenuItem]
-        statusItem.menu = statusMenu
-        statusItem.button?.title = "💂‍♀️"
     }
 }

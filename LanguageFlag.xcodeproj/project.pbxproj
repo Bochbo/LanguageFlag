@@ -16,6 +16,7 @@
 		40E94A3F244D0230001E93E1 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E94A3E244D0230001E93E1 /* NotificationName.swift */; };
 		D829E663283B700300AEA0A0 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D829E662283B700300AEA0A0 /* LaunchAtLogin */; };
 		D87B3EC22683AACF00EC96D2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87B3EC12683AACF00EC96D2 /* main.swift */; };
+		D87E506229B5394F000A3AB5 /* StatusBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87E506129B5394F000A3AB5 /* StatusBarManager.swift */; };
 		D8E267AE26A6F30A008B3689 /* TISInputSource+GetProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E267AD26A6F30A008B3689 /* TISInputSource+GetProperty.swift */; };
 		D8E267B426A70A86008B3689 /* Layout.json in Resources */ = {isa = PBXBuildFile; fileRef = D8E267B326A70A86008B3689 /* Layout.json */; };
 		D8E267B626A70EE6008B3689 /* LayoutImageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E267B526A70EE6008B3689 /* LayoutImageContainer.swift */; };
@@ -34,6 +35,7 @@
 		40E0C9BA244B7F030012F409 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		40E94A3E244D0230001E93E1 /* NotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		D87B3EC12683AACF00EC96D2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		D87E506129B5394F000A3AB5 /* StatusBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarManager.swift; sourceTree = "<group>"; };
 		D893F1C229ACE19C0022EF46 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D8E267AD26A6F30A008B3689 /* TISInputSource+GetProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TISInputSource+GetProperty.swift"; sourceTree = "<group>"; };
 		D8E267B326A70A86008B3689 /* Layout.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Layout.json; sourceTree = "<group>"; };
@@ -77,10 +79,10 @@
 		40C655E0244C423500BBA413 /* Stories */ = {
 			isa = PBXGroup;
 			children = (
+				D8E651AD29AC013C002F47B9 /* LanguageWindow.swift */,
 				40C655E1244C425800BBA413 /* LanguageWindowController.swift */,
 				40E0C9AB244B7EF50012F409 /* LanguageViewController.swift */,
 				40E0C9AF244B7EF60012F409 /* Main.storyboard */,
-				D8E651AD29AC013C002F47B9 /* LanguageWindow.swift */,
 			);
 			path = Stories;
 			sourceTree = "<group>";
@@ -136,6 +138,7 @@
 		D8E267B826A712C8008B3689 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D87E506129B5394F000A3AB5 /* StatusBarManager.swift */,
 				D8E267B526A70EE6008B3689 /* LayoutImageContainer.swift */,
 			);
 			path = Helpers;
@@ -248,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				40E0C9AC244B7EF50012F409 /* LanguageViewController.swift in Sources */,
+				D87E506229B5394F000A3AB5 /* StatusBarManager.swift in Sources */,
 				D8E267B626A70EE6008B3689 /* LayoutImageContainer.swift in Sources */,
 				D8EB1E2929AF615100812827 /* KeyboardLayoutNotification.swift in Sources */,
 				D87B3EC22683AACF00EC96D2 /* main.swift in Sources */,
@@ -398,10 +402,10 @@
 				CODE_SIGN_ENTITLEMENTS = LanguageFlag/LanguageFlag.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = F635V5HA8L;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "LanguageFlag/Supporting files/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Language Flag";
@@ -411,8 +415,10 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.localmaster.languageflag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -425,10 +431,10 @@
 				CODE_SIGN_ENTITLEMENTS = LanguageFlag/LanguageFlag.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = F635V5HA8L;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "LanguageFlag/Supporting files/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Language Flag";
@@ -438,8 +444,10 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.localmaster.languageflag;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

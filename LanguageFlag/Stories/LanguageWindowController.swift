@@ -8,11 +8,25 @@
 
 import Cocoa
 
+@propertyWrapper
+struct ScheduledTimer {
+
+    private var timer: Timer = Timer()
+    var wrappedValue: Timer {
+        get { timer }
+        set {
+            timer.invalidate()
+            timer = newValue
+            RunLoop.main.add(timer, forMode: .common)
+        }
+    }
+}
+
 final class LanguageWindowController: NSWindowController {
 
     // MARK: - Variables
     var screenRect: NSRect?
-    private var timer = Timer()
+    @ScheduledTimer private var timer: Timer
 
     // MARK: - Life cycle
     override func windowDidLoad() {
@@ -44,7 +58,8 @@ extension LanguageWindowController {
 extension LanguageWindowController {
 
     private func configureWindow() {
-        guard let screenRect = screenRect else { return }
+        let screenRect = screenRect ?? NSScreen.main?.visibleFrame
+        guard let screenRect else { return }
         let rect = createRect(in: screenRect)
         window = LanguageWindow(contentRect: rect)
         window?.setFrame(rect, display: true)
@@ -84,7 +99,6 @@ extension LanguageWindowController {
             selector: #selector(hideApplication),
             userInfo: nil,
             repeats: false)
-        RunLoop.main.add(timer, forMode: .common)
     }
     
     private func runShowWindowAnimation() {
@@ -97,13 +111,10 @@ extension LanguageWindowController {
     }
     
     private func runHideWindowAnimation() {
-        NSAnimationContext.runAnimationGroup({ (context) -> Void in
+        NSAnimationContext.runAnimationGroup { (context) -> Void in
             context.duration = 0.4
             window?.animator().alphaValue = 0
             window?.contentView?.animator().alphaValue = 0
-        }, completionHandler: { [weak self] in
-            guard let self = self else { return }
-            self.window?.orderOut(self)
-        })
+        }
     }
 }
