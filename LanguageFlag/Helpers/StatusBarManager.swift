@@ -1,80 +1,98 @@
-//
-//  StatusBarManager.swift
-//  LanguageFlag
-//
-//  Created by Bohdan Bochkovskyi on 05.03.2023.
-//  Copyright © 2023 Bohdan. All rights reserved.
-//
-
 import Cocoa
 import LaunchAtLogin
 import Carbon
 
 final class StatusBarManager {
 
-    // MARK: Variables
-    private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    // MARK: - Properties
+    private let statusItem: NSStatusItem
     private let layoutImageContainer: LayoutImageContainer
+    private let menuBuilder: StatusBarMenuBuilder
 
-    // MARK: Init
-    init(layoutImageContainer: LayoutImageContainer = LayoutImageContainer.shared) {
+    // MARK: - Initialization
+    init(
+        layoutImageContainer: LayoutImageContainer = LayoutImageContainer.shared,
+        menuBuilder: StatusBarMenuBuilder = StatusBarMenuBuilder()
+    ) {
         self.layoutImageContainer = layoutImageContainer
-        configureStatusBar()
-        addObserver()
+        self.menuBuilder = menuBuilder
+        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        
+        setupStatusBar()
+        addObservers()
     }
 
+    // MARK: - Deinit
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 }
 
-// MARK: Actions
+// MARK: - Setup Methods
 private extension StatusBarManager {
 
-    @objc
-    private func keyboardLayoutChanged(notification: NSNotification) {
-        let model = notification.object as? KeyboardLayoutNotification
-        setImageForStatItem(keyboardLayout: model?.keyboardLayout)
+    /// Configures the status bar and menu items.
+    func setupStatusBar() {
+        // Build and assign the menu
+        let menu = menuBuilder.buildMenu(
+            launchAtLoginAction: #selector(toggleLaunchAtLogin),
+            exitAction: #selector(exitApplication),
+            target: self
+        )
+        statusItem.menu = menu
+
+        // Set the initial icon or title
+        let keyboardLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue().name
+        updateStatusBarIcon(for: keyboardLayout)
     }
 
+    /// Subscribes to relevant notifications.
+    func addObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardLayoutChanged),
+            name: .keyboardLayoutChanged,
+            object: nil
+        )
+    }
+}
+
+// MARK: - Actions
+private extension StatusBarManager {
+
+    /// Handles keyboard layout change notifications.
     @objc
-    private func changeLaunchAtLoginState(_ sender: NSMenuItem?) {
+    func keyboardLayoutChanged(notification: NSNotification) {
+        guard let model = notification.object as? KeyboardLayoutNotification else { return }
+        updateStatusBarIcon(for: model.keyboardLayout)
+    }
+
+    /// Toggles the Launch at Login state.
+    @objc
+    func toggleLaunchAtLogin(_ sender: NSMenuItem?) {
         LaunchAtLogin.isEnabled.toggle()
-        sender?.state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
+        sender?.state = LaunchAtLogin.isEnabled ? .on : .off
     }
 
+    /// Exits the application.
     @objc
-    private func exitApplication() {
+    func exitApplication() {
         NSApplication.shared.terminate(self)
     }
 }
 
-// MARK: Private
+// MARK: - Helper Methods
 private extension StatusBarManager {
 
-    private func setImageForStatItem(keyboardLayout: String?) {
+    /// Updates the status bar icon or title based on the keyboard layout.
+    func updateStatusBarIcon(for keyboardLayout: String?) {
         let iconSize = NSSize(width: 24, height: 24)
-        statusItem.button?.image = keyboardLayout.flatMap { layoutImageContainer.getFlagItem(for: $0, size: iconSize) }
-        statusItem.button?.title = keyboardLayout == nil ? "💂‍♀️" : ""
-    }
-
-    private func configureStatusBar() {
-        let statusMenu = NSMenu()
-        statusMenu.addItem(withTitle: "Language Flag", action: nil, keyEquivalent: "")
-        statusMenu.addItem(NSMenuItem.separator())
-        statusMenu.addItem(withTitle: "Launch at login", action: #selector(changeLaunchAtLoginState), keyEquivalent: "")
-        statusMenu.addItem(withTitle: "Exit", action: #selector(exitApplication), keyEquivalent: "")
-        statusMenu.items.forEach { $0.target = self }
-        statusMenu.item(at: 2)?.state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
-        statusItem.menu = statusMenu
-        let keyboardLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue().name
-        setImageForStatItem(keyboardLayout: keyboardLayout)
-    }
-
-    private func addObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardLayoutChanged),
-                                               name: .keyboardLayoutChanged,
-                                               object: nil)
+        if let keyboardLayout = keyboardLayout {
+            statusItem.button?.image = layoutImageContainer.getFlagItem(for: keyboardLayout, size: iconSize)
+            statusItem.button?.title = ""
+        } else {
+            statusItem.button?.image = nil
+            statusItem.button?.title = "💂‍♀️"
+        }
     }
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,10 @@
 		40E0C9B1244B7EF60012F409 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40E0C9AF244B7EF60012F409 /* Main.storyboard */; };
 		40E0C9BB244B7F030012F409 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40E0C9BA244B7F030012F409 /* Carbon.framework */; };
 		40E94A3F244D0230001E93E1 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E94A3E244D0230001E93E1 /* NotificationName.swift */; };
+		B43DD34F2D12736400438CFB /* CapsLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DD34E2D12736400438CFB /* CapsLockManager.swift */; };
+		B43DD3512D12739D00438CFB /* ScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DD3502D12739D00438CFB /* ScreenManager.swift */; };
+		B43DD3532D1273C600438CFB /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DD3522D1273C600438CFB /* NotificationManager.swift */; };
+		B43DD3552D12772D00438CFB /* StatusBarMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DD3542D12772D00438CFB /* StatusBarMenuBuilder.swift */; };
 		D829E663283B700300AEA0A0 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D829E662283B700300AEA0A0 /* LaunchAtLogin */; };
 		D87B3EC22683AACF00EC96D2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87B3EC12683AACF00EC96D2 /* main.swift */; };
 		D87E506229B5394F000A3AB5 /* StatusBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87E506129B5394F000A3AB5 /* StatusBarManager.swift */; };
@@ -34,6 +38,10 @@
 		40E0C9B3244B7EF60012F409 /* LanguageFlag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LanguageFlag.entitlements; sourceTree = "<group>"; };
 		40E0C9BA244B7F030012F409 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		40E94A3E244D0230001E93E1 /* NotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
+		B43DD34E2D12736400438CFB /* CapsLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsLockManager.swift; sourceTree = "<group>"; };
+		B43DD3502D12739D00438CFB /* ScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenManager.swift; sourceTree = "<group>"; };
+		B43DD3522D1273C600438CFB /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		B43DD3542D12772D00438CFB /* StatusBarMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarMenuBuilder.swift; sourceTree = "<group>"; };
 		D87B3EC12683AACF00EC96D2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D87E506129B5394F000A3AB5 /* StatusBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarManager.swift; sourceTree = "<group>"; };
 		D893F1C229ACE19C0022EF46 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,8 +146,12 @@
 		D8E267B826A712C8008B3689 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				D87E506129B5394F000A3AB5 /* StatusBarManager.swift */,
+				B43DD34E2D12736400438CFB /* CapsLockManager.swift */,
 				D8E267B526A70EE6008B3689 /* LayoutImageContainer.swift */,
+				B43DD3522D1273C600438CFB /* NotificationManager.swift */,
+				B43DD3502D12739D00438CFB /* ScreenManager.swift */,
+				D87E506129B5394F000A3AB5 /* StatusBarManager.swift */,
+				B43DD3542D12772D00438CFB /* StatusBarMenuBuilder.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -251,12 +263,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				40E0C9AC244B7EF50012F409 /* LanguageViewController.swift in Sources */,
+				B43DD3512D12739D00438CFB /* ScreenManager.swift in Sources */,
 				D87E506229B5394F000A3AB5 /* StatusBarManager.swift in Sources */,
 				D8E267B626A70EE6008B3689 /* LayoutImageContainer.swift in Sources */,
 				D8EB1E2929AF615100812827 /* KeyboardLayoutNotification.swift in Sources */,
 				D87B3EC22683AACF00EC96D2 /* main.swift in Sources */,
+				B43DD3532D1273C600438CFB /* NotificationManager.swift in Sources */,
+				B43DD34F2D12736400438CFB /* CapsLockManager.swift in Sources */,
 				D8E267AE26A6F30A008B3689 /* TISInputSource+GetProperty.swift in Sources */,
 				D8E651AE29AC013C002F47B9 /* LanguageWindow.swift in Sources */,
+				B43DD3552D12772D00438CFB /* StatusBarMenuBuilder.swift in Sources */,
 				40C655E2244C425800BBA413 /* LanguageWindowController.swift in Sources */,
 				40E0C9AA244B7EF50012F409 /* AppDelegate.swift in Sources */,
 				40E94A3F244D0230001E93E1 /* NotificationName.swift in Sources */,
