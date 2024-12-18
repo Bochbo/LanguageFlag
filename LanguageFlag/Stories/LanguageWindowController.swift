@@ -35,6 +35,11 @@ final class LanguageWindowController: NSWindowController {
         configureContentViewController()
         addObserver()
     }
+    
+    // MARK: - Deinit
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 // MARK: - Actions
@@ -58,8 +63,8 @@ extension LanguageWindowController {
 extension LanguageWindowController {
 
     private func configureWindow() {
-        let screenRect = screenRect ?? NSScreen.main?.visibleFrame
-        guard let screenRect else { return }
+        guard let screenRect = screenRect ?? NSScreen.main?.visibleFrame else { return }
+
         let rect = createRect(in: screenRect)
         window = LanguageWindow(contentRect: rect)
         window?.setFrame(rect, display: true)
@@ -69,20 +74,23 @@ extension LanguageWindowController {
         let posX: CGFloat = screen.minX + (screen.width - LanguageViewController.width) / 2
         let posY: CGFloat = screen.minY + screen.height * 0.16
         let rect = NSRect(x: posX, y: posY, width: LanguageViewController.width, height: LanguageViewController.height)
+
         return rect
     }
 
     private func configureContentViewController() {
         let mainStoryboard = NSStoryboard.init(name: "Main", bundle: nil)
+
         guard let flagVC = mainStoryboard.instantiateController(withIdentifier: "flagController") as? LanguageViewController else {
             return
         }
+
         window?.contentViewController = flagVC
         let cornerRadius: CGFloat = 16
-        window?.contentView?.wantsLayer = true
-        window?.contentView?.layer?.cornerRadius = cornerRadius
-        window?.contentView?.superview?.wantsLayer = true
-        window?.contentView?.superview?.layer?.cornerRadius = cornerRadius
+        [window?.contentView, window?.contentView?.superview].forEach {
+            $0?.wantsLayer = true
+            $0?.layer?.cornerRadius = cornerRadius
+        }
     }
     
     private func addObserver() {

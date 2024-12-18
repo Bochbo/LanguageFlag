@@ -12,12 +12,13 @@ final class LayoutImageContainer {
 
     // MARK: Variables
     static let shared = LayoutImageContainer()
+
     private lazy var layoutDictionary: Dictionary<String, String> = {
         createLayoutDictionary()
     }()
     private var cachedIcons = NSCache<NSString, NSImage>()
 
-    // MARK: Public
+    // MARK: Internal
     func getImage(for keyboardLayout: String) -> NSImage? {
         guard
             let imageName = layoutDictionary[keyboardLayout],

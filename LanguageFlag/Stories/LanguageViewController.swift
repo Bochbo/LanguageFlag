@@ -27,6 +27,7 @@ class LanguageViewController: NSViewController {
         addObserver()
     }
     
+    // MARK: - Deinit
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -38,7 +39,10 @@ extension LanguageViewController {
     @objc
     private func keyboardLayoutChanged(notification: NSNotification) {
         guard let model = notification.object as? KeyboardLayoutNotification else { return }
-        changeFlagImage(keyboardLayout: model.keyboardLayout, isCapsLockEnabled: model.isCapsLockEnabled, iconRef: model.iconRef)
+
+        changeFlagImage(keyboardLayout: model.keyboardLayout,
+                        isCapsLockEnabled: model.isCapsLockEnabled,
+                        iconRef: model.iconRef)
     }
 }
 

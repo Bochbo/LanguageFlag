@@ -1,17 +1,15 @@
-//
-//  LanguageWindow.swift
-//  LanguageFlag
-//
-//  Created by Bohdan Bochkovskyi on 26.02.2023.
-//  Copyright © 2023 Bohdan. All rights reserved.
-//
-
 import Cocoa
 
 final class LanguageWindow: NSWindow {
 
+    // MARK: - Init
     init(contentRect: NSRect) {
         super.init(contentRect: contentRect, styleMask: .borderless, backing: .buffered, defer: false)
+        configureAppearance()
+    }
+    
+    // MARK: - Private
+    private func configureAppearance() {
         isOpaque = false
         backgroundColor = .clear
         level = .floating
