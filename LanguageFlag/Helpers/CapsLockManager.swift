@@ -1,4 +1,5 @@
 import Cocoa
+import Carbon
 
 class CapsLockManager {
     
@@ -27,17 +28,21 @@ extension CapsLockManager {
         let capsLockEnabled = event.modifierFlags.contains(.capsLock)
         if isCapsLockEnabled != capsLockEnabled {
             isCapsLockEnabled = capsLockEnabled
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                self.notifyCapsLockStateChanged()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.10) {
+                self.notifyCapsLockStateChanged(newCapsLockEnabled: capsLockEnabled)
             }
         }
     }
     
     /// Notifies observers about the Caps Lock state change.
-    private func notifyCapsLockStateChanged() {
-        NotificationCenter.default.post(
-            name: .keyboardLayoutChanged,
-            object: nil // Pass data if needed
-        )
+    private func notifyCapsLockStateChanged(newCapsLockEnabled: Bool) {
+        let currentLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue()
+        let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
+                                               isCapsLockEnabled: newCapsLockEnabled,
+                                               iconRef: currentLayout.iconRef)
+
+        NotificationCenter.default.post(name: .keyboardLayoutChanged,
+                                        object: model)
     }
 }

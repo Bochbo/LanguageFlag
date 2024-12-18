@@ -1,5 +1,6 @@
 import Foundation
 import Carbon
+import Combine
 
 class NotificationManager {
     
@@ -33,6 +34,7 @@ extension NotificationManager {
         let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
                                                isCapsLockEnabled: capsLockManager.isCapsLockEnabled,
                                                iconRef: currentLayout.iconRef)
+
         NotificationCenter.default.post(name: .keyboardLayoutChanged, object: model)
     }
 }
