@@ -6,6 +6,7 @@
 //  Copyright © 2020 Bohdan. All rights reserved.
 //
 
+import Carbon
 import Cocoa
 
 class LanguageViewController: NSViewController {
@@ -40,6 +41,7 @@ extension LanguageViewController {
     @objc
     private func keyboardLayoutChanged(notification: NSNotification) {
         guard let model = notification.object as? KeyboardLayoutNotification else { return }
+
         previousModel = model
         changeFlagImage(keyboardLayout: model.keyboardLayout,
                         isCapsLockEnabled: model.isCapsLockEnabled,
@@ -69,7 +71,17 @@ extension LanguageViewController {
             view.heightAnchor.constraint(equalToConstant: Self.height),
             view.widthAnchor.constraint(equalToConstant: Self.width),
         ])
+
         bigLabel.cell?.wraps = true
+        
+        let currentLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue()
+        let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
+                                               isCapsLockEnabled: false,
+                                               iconRef: currentLayout.iconRef)
+
+        changeFlagImage(keyboardLayout: model.keyboardLayout,
+                        isCapsLockEnabled: model.isCapsLockEnabled,
+                        iconRef: model.iconRef)
     }
 
     private func addObserver() {
@@ -84,26 +96,33 @@ extension LanguageViewController {
                                                object: nil)
     }
     
-    private func changeFlagImage(keyboardLayout: String, isCapsLockEnabled: Bool, iconRef: IconRef?) {
+    private func changeFlagImage(keyboardLayout: String,
+                                 isCapsLockEnabled: Bool,
+                                 iconRef: IconRef?) {
         let languageText = isCapsLockEnabled ? "⇪ " + keyboardLayout : keyboardLayout
 
         guard let image = layoutImageContainer.getImage(for: keyboardLayout) else {
             tryToSetImage(with: iconRef, languageText: languageText)
             return
         }
+
         set(bigLabelText: "", flagImage: image, languageLabelText: languageText)
     }
 
-    private func tryToSetImage(with iconRef: IconRef?, languageText: String) {
+    private func tryToSetImage(with iconRef: IconRef?,
+                               languageText: String) {
         guard let iconRef else {
             set(bigLabelText: languageText, flagImage: nil, languageLabelText: "")
             return
         }
+
         let image = NSImage(iconRef: iconRef)
         set(bigLabelText: "", flagImage: image, languageLabelText: languageText)
     }
     
-    private func set(bigLabelText: String, flagImage: NSImage?, languageLabelText: String) {
+    private func set(bigLabelText: String,
+                     flagImage: NSImage?,
+                     languageLabelText: String) {
         bigLabel.stringValue = bigLabelText
         flagImageView.image = flagImage
         languageNameLabel.stringValue = languageLabelText

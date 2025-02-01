@@ -112,6 +112,7 @@ private extension StatusBarManager {
     /// Updates the status bar icon or title based on the keyboard layout.
     func updateStatusBarIcon(for keyboardLayout: String?) {
         let iconSize = NSSize(width: 24, height: 24)
+
         if let keyboardLayout = keyboardLayout {
             statusItem.button?.image = layoutImageContainer.getFlagItem(for: keyboardLayout, size: iconSize)
             statusItem.button?.title = ""
