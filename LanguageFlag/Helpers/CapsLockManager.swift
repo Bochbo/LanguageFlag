@@ -4,11 +4,17 @@ import Carbon
 class CapsLockManager {
     
     // MARK: - Variables
-    private(set) var isCapsLockEnabled = false
+    private(set) var isCapsLockEnabled: Bool = false
     
     // MARK: - Init
     init() {
         setupCapsLockObserver()
+        isCapsLockEnabled = isCapsLockOn()
+    }
+    
+    func isCapsLockOn() -> Bool {
+        let flags = CGEventSource.flagsState(.combinedSessionState)
+        return flags.contains(.maskAlphaShift)
     }
 }
 
@@ -25,24 +31,16 @@ extension CapsLockManager {
     
     /// Handles Caps Lock state changes.
     private func handleCapsLockStateChange(event: NSEvent) {
-        let capsLockEnabled = event.modifierFlags.contains(.capsLock)
+        let capsLockEnabled = isCapsLockOn()
         if isCapsLockEnabled != capsLockEnabled {
             isCapsLockEnabled = capsLockEnabled
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.10) {
-                self.notifyCapsLockStateChanged(newCapsLockEnabled: capsLockEnabled)
-            }
+            notifyCapsLockStateChanged(newCapsLockEnabled: capsLockEnabled)
         }
     }
     
     /// Notifies observers about the Caps Lock state change.
     private func notifyCapsLockStateChanged(newCapsLockEnabled: Bool) {
-        let currentLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue()
-        let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
-                                               isCapsLockEnabled: newCapsLockEnabled,
-                                               iconRef: currentLayout.iconRef)
-
-        NotificationCenter.default.post(name: .keyboardLayoutChanged,
-                                        object: model)
+        NotificationCenter.default.post(name: .capsLockChanged,
+                                        object: newCapsLockEnabled)
     }
 }

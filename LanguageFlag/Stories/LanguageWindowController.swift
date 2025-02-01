@@ -51,6 +51,13 @@ extension LanguageWindowController {
         runShowWindowAnimation()
         scheduleTimer()
     }
+    
+    @objc
+    private func capsLockChanged(notification: NSNotification) {
+        timer.invalidate()
+        runShowWindowAnimation()
+        scheduleTimer()
+    }
 
     @objc
     private func hideApplication() {
@@ -97,6 +104,11 @@ extension LanguageWindowController {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardLayoutChanged),
                                                name: .keyboardLayoutChanged,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(capsLockChanged),
+                                               name: .capsLockChanged,
                                                object: nil)
     }
     

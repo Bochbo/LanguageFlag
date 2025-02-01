@@ -44,6 +44,60 @@ final class LayoutImageContainer {
         return resizedimage
     }
 
+    func getFlagItem(for keyboardLayout: String, size: NSSize, isCapsLock: Bool) -> NSImage? {
+        let cacheKey = "\(keyboardLayout)-\(size.width)x\(size.height)-\(isCapsLock)" as NSString
+
+        if let cachedIcon = cachedIcons.object(forKey: cacheKey) {
+            return cachedIcon
+        }
+
+        guard let image = getImage(for: keyboardLayout) else {
+            return nil
+        }
+
+        let resizedImage = NSImage(size: size, flipped: false) { (rect) -> Bool in
+            image.draw(in: rect)
+
+            if isCapsLock {
+                let capsLockSymbol = "⇪"
+                let attributes: [NSAttributedString.Key: Any] = [
+                    .font: NSFont.systemFont(ofSize: size.height * 0.3), // Adjust size as needed
+                    .foregroundColor: NSColor.white
+                ]
+                let attributedString = NSAttributedString(string: capsLockSymbol, attributes: attributes)
+                let stringSize = attributedString.size()
+
+                // Padding and positioning for the symbol
+                let padding: CGFloat = 2.0
+                let x = rect.origin.x + padding
+                let y = rect.origin.y + padding
+
+                // Calculate background size and create a rounded rectangle path
+                let backgroundPadding: CGFloat = 1.0 // Padding around the symbol inside the background
+                let backgroundRect = NSRect(
+                    x: x - backgroundPadding,
+                    y: y - backgroundPadding,
+                    width: stringSize.width + 2 * backgroundPadding,
+                    height: stringSize.height + 2 * backgroundPadding
+                )
+                let cornerRadius: CGFloat = 4.0 // Adjust for desired roundness
+                let backgroundPath = NSBezierPath(roundedRect: backgroundRect, xRadius: cornerRadius, yRadius: cornerRadius)
+
+                // Set the background color (semi-transparent black)
+                NSColor(white: 0, alpha: 0.5).setFill() // Adjust alpha for desired transparency
+                backgroundPath.fill()
+
+                // Draw the symbol
+                let stringRect = NSRect(x: x, y: y, width: stringSize.width, height: stringSize.height)
+                attributedString.draw(in: stringRect)
+            }
+            return true
+        }
+
+        cachedIcons.setObject(resizedImage, forKey: cacheKey)
+        return resizedImage
+    }
+
     // MARK: Private
     private func createLayoutDictionary() -> [String: String] {
         guard

@@ -3,13 +3,9 @@ import Carbon
 import Combine
 
 class NotificationManager {
-    
-    // MARK: - Variables
-    private let capsLockManager: CapsLockManager
 
     // MARK: - Init
-    init(capsLockManager: CapsLockManager) {
-        self.capsLockManager = capsLockManager
+    init() {
         setupObservers()
     }
 }
@@ -32,9 +28,8 @@ extension NotificationManager {
     private func handleInputSourceChange() {
         let currentLayout = TISCopyCurrentKeyboardInputSource().takeUnretainedValue()
         let model = KeyboardLayoutNotification(keyboardLayout: currentLayout.name,
-                                               isCapsLockEnabled: capsLockManager.isCapsLockEnabled,
+                                               isCapsLockEnabled: false,
                                                iconRef: currentLayout.iconRef)
-
         NotificationCenter.default.post(name: .keyboardLayoutChanged, object: model)
     }
 }

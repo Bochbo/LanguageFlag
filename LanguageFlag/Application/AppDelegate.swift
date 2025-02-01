@@ -16,14 +16,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var languageWindowControllerArray = [LanguageWindowController]()
     private var statusBarManager: StatusBarManager?
     private var screenManager: ScreenManager!
-    private var capsLockManager: CapsLockManager!
     private var notificationManager: NotificationManager!
 
     // MARK: - Life cycle
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusBarManager = StatusBarManager()
         screenManager = ScreenManager()
-        capsLockManager = CapsLockManager()
-        notificationManager = NotificationManager(capsLockManager: capsLockManager)
+        notificationManager = NotificationManager()
     }
 }

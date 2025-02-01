@@ -8,6 +8,7 @@ final class StatusBarManager {
     private let statusItem: NSStatusItem
     private let layoutImageContainer: LayoutImageContainer
     private let menuBuilder: StatusBarMenuBuilder
+    private var previousModel: KeyboardLayoutNotification?
 
     // MARK: - Initialization
     init(
@@ -54,6 +55,13 @@ private extension StatusBarManager {
             name: .keyboardLayoutChanged,
             object: nil
         )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(capsLockChanged),
+            name: .capsLockChanged,
+            object: nil
+        )
     }
 }
 
@@ -64,9 +72,26 @@ private extension StatusBarManager {
     @objc
     func keyboardLayoutChanged(notification: NSNotification) {
         guard let model = notification.object as? KeyboardLayoutNotification else { return }
-        updateStatusBarIcon(for: model.keyboardLayout)
+
+        previousModel = model
+        updateStatusBarIcon(for: model)
     }
 
+    @objc
+    func capsLockChanged(notification: NSNotification) {
+        guard
+            let newCapsLockState = notification.object as? Bool,
+            let previousModel
+        else {
+            return
+        }
+
+        let newModel = KeyboardLayoutNotification(keyboardLayout: previousModel.keyboardLayout,
+                                                  isCapsLockEnabled: newCapsLockState,
+                                                  iconRef: previousModel.iconRef)
+        updateStatusBarIcon(for: newModel)
+    }
+    
     /// Toggles the Launch at Login state.
     @objc
     func toggleLaunchAtLogin(_ sender: NSMenuItem?) {
@@ -94,5 +119,18 @@ private extension StatusBarManager {
             statusItem.button?.image = nil
             statusItem.button?.title = "💂‍♀️"
         }
+    }
+    
+    func updateStatusBarIcon(for model: KeyboardLayoutNotification) {
+        let iconSize = NSSize(width: 24, height: 24)
+        statusItem.button?.image = layoutImageContainer.getFlagItem(for: model.keyboardLayout,
+                                                                        size: iconSize,
+                                                                        isCapsLock: isCapsLockOn())
+        statusItem.button?.title = ""
+    }
+    
+    func isCapsLockOn() -> Bool {
+        let flags = CGEventSource.flagsState(.combinedSessionState)
+        return flags.contains(.maskAlphaShift)
     }
 }
